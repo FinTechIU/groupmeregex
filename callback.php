@@ -152,6 +152,7 @@ if (str_starts_with($message, '/') && user_is_admin($group_id, $request_body['us
         if (preg_match($r, $message)) {
             if (user_is_admin($group_id, $request_body['user_id'], $request_body['token']) == false) {
                 
+                error_log('Filter triggered: ' . $r . ' on message text "' . $message . '"');
                 remove_message($group_id, $request_body['id'], $request_body['token']);
                 $k = kick_user($group_id, $request_body['user_id'], $request_body['token']);
                 
