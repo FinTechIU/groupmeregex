@@ -66,7 +66,7 @@ function get_memberships($group_id, $token) {
 function get_user_info($group_id, $user_id, $token) {
     $memberships = get_memberships($group_id, $token);
     
-    error_log(json_encode($memberships));
+    //error_log(json_encode($memberships));
     
     foreach ($memberships as $membership) {
         if ($membership['user_id'] == $user_id) {
@@ -141,6 +141,7 @@ if (str_starts_with($message, '/') && user_is_admin($group_id, $request_body['us
         }
     } else if ($parts[0] == 'removeall') {
         unlink($filter_file);
+        touch($filter_file);
         send($bot_id, "Removed all filters!");
     } else {
         send($bot_id, "Error: unrecognized command.");
@@ -150,9 +151,9 @@ if (str_starts_with($message, '/') && user_is_admin($group_id, $request_body['us
     array_pop($filters);
     foreach ($filters as $r) {
         if (preg_match($r, $message)) {
+            error_log('Filter triggered: ' . $r . ' on message text "' . $message . '"');
             if (user_is_admin($group_id, $request_body['user_id'], $request_body['token']) == false) {
                 
-                error_log('Filter triggered: ' . $r . ' on message text "' . $message . '"');
                 remove_message($group_id, $request_body['id'], $request_body['token']);
                 $k = kick_user($group_id, $request_body['user_id'], $request_body['token']);
                 
